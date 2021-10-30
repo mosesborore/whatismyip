@@ -13,20 +13,30 @@ def random_user_agents():
 
 	return random.choice(UA)
 
-# set user-agent
-headers = {"User-Agent": random_user_agents()}
 
-response = requests.get("https://whatismyip.com", headers=headers)
+try:
+    # set user-agent
+	headers = {"User-Agent": random_user_agents()}
+ 
+	response = requests.get("https://whatismyip.com", headers=headers)
 
-print("Status code:", response.status_code)
+	status_code = response.status_code
+	if status_code == 403:
+		print(f'Status code: {status_code}. Forbidden')
+	elif status_code == 200:
+		print(f"Status code: {status_code}. Success")
 
-soup = BeautifulSoup(response.text, "lxml")
 
-ip_info  = soup.find_all('li', class_='py-1')
 
-for i in range(len(ip_info)):
-	temp = ip_info[i]
-	if temp:
-		print(temp.text)
-	else:
-		continue
+	soup = BeautifulSoup(response.text, "lxml")
+
+	ip_info  = soup.find_all('li', class_='py-1')
+
+	for i in range(len(ip_info)):
+		temp = ip_info[i]
+		if temp:
+			print(temp.text)
+		else:
+			continue
+except requests.exceptions.ConnectionError:
+    print("ERROR: No internet connection.")
