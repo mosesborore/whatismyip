@@ -63,6 +63,8 @@ def ipinfo():
             Timezone: {data['timezone']}
             """
         )
+    else:
+        print("[--] ERROR: cannot access the site")
 
 
 def check_conn():
