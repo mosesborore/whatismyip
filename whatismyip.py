@@ -1,7 +1,6 @@
-import bs4
-import requests
-from bs4 import BeautifulSoup
 import random
+
+import httpx
 
 
 def random_user_agents():
@@ -18,11 +17,12 @@ def random_user_agents():
 
 
 def whatismyip():
+    from bs4 import BeautifulSoup
 
     # set user-agent
     headers = {"User-Agent": random_user_agents()}
 
-    response = requests.get("https://whatismyip.com", headers=headers)
+    response = httpx.get("https://whatismyip.com", headers=headers)
 
     status_code = response.status_code
     if status_code == 403:
@@ -42,16 +42,16 @@ def whatismyip():
             continue
 
 
-def ipinfo():
+def ip_info():
     """using https://ipinfo.io/json to get the ip address & others"""
     # set user-agent
     headers = {"User-Agent": random_user_agents()}
 
-    res = requests.get("https://ipinfo.io/json", headers=headers)
-
-    data = res.json()
+    res = httpx.get("https://ipinfo.io/json", headers=headers)
 
     if res.status_code == 200:
+        data = res.json()
+
         print(
             f"""
             IP: {data['ip']}
@@ -64,20 +64,20 @@ def ipinfo():
             """
         )
     else:
-        print("[--] ERROR: cannot access the site")
+        print(f"[--] ERROR: status code => {res.status_code}")
 
 
 def check_conn():
     try:
         print("[--] Checking internet connection.....")
-        res = requests.get("https://google.com")
+        res = httpx.get("https://google.com")
         if res.status_code == 200:
             print("[--] All good.....\n")
-    except requests.exceptions.ConnectionError:
+    except httpx.ConnectError:
         print("[--] ERROR: No internet connection.")
         exit(123)
 
 
 if __name__ == "__main__":
     check_conn()
-    ipinfo()
+    ip_info()
